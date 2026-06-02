@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function NavBar() {
     return (
         <div>
@@ -7,10 +9,10 @@ export default function NavBar() {
                 </nav>
                 <p>Find your next furry (or feathery) friend.</p>
                 <ul className="navbar-menu">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/dashboard">Adopt</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <li><Link href="/">Home</Link></li>
+                    <li><Link href="/dashboard">Adopt</Link></li>
+                    <li><Link href="/about">About</Link></li>
+                    <li><Link href="/contact">Contact</Link></li>
                 </ul>
             </header>
         </div>
