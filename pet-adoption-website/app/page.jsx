@@ -1,4 +1,4 @@
-
+import NavBar from './components/navbar';
 export default function HomePage() {
 
   const featuredPets = [
@@ -9,16 +9,7 @@ export default function HomePage() {
   return (
     <div>
       <header>
-        <nav className="navbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 450 }}>
-          <img src="banner.png" alt="Banner Logo" className="navbar-logo" style={{ maxWidth: '70%', height: 'auto' }} />
-        </nav>
-        <p>Find your next furry (or feathery) friend.</p>
-         <ul className ="navbar-menu">
-            <li>Home</li>
-            <li>Adopt</li>
-            <li>About</li>
-            <li>Contact</li>
-          </ul>
+        <NavBar />
       </header>
 
       <main>
