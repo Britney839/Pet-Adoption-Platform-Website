@@ -1,25 +1,14 @@
 
 
-export async function GetPets() {
+export async function GET() {
     try {
-        const pets = `https://dog.ceo/api/breeds/image/random`;
-
-        const response = await fetch(pets, {
-            method: 'GET',
-             headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch pets');
-        }
+        const response = await fetch("https://dog.ceo/api/breeds/image/random");
 
         const data = await response.json();
-        return data;
+        return Response.json(data);
 
         } catch (error) {
-            console.error('Error fetching pets:', error.message);
+            return Response.json({ error: 'Failed to fetch pets' }, { status: 500 });
         }
 
 }
