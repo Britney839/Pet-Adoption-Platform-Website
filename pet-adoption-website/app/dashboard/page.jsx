@@ -58,9 +58,6 @@ export default function DashboardPage() {
           {/* add contact button here somewhere eventually which brings to contact page */}
         </section>
       </main>
-      <footer>
-        <p>&copy; 2026 Brave Paws Adoption. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

@@ -65,10 +65,6 @@ export default function HomePage() {
           <button>View Pets Available Now</button>
         </section>
       </main>
-
-      <footer>
-        <p>&copy; 2026 Brave Paws Adoption. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
