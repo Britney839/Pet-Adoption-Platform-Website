@@ -45,10 +45,6 @@ export default function ContactPage() {
           <p>Address: 123 Paw Lane, St. John's</p>
         </section>
       </main>
-
-      <footer>
-        <p>&copy; 2026 Brave Paws Adoption. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
