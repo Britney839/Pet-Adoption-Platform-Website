@@ -1,6 +1,30 @@
+"use client";
+
 import NavBar from "../../components/navbar";
+import { useEffect, useState } from "react";
 
 export default function AboutPage() {
+  const [dogImg, setDogImg] = useState("");
+
+  async function getDogImage() {
+    try {
+      const response = await fetch("/api");
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setDogImg(data.message);
+    } catch (error) {
+      console.error("Error fetching dog image:", error.message);
+    }
+  }
+
+  useEffect(() => {
+    getDogImage();
+  }, []);
+
   return (
     <div>
       <header>
@@ -21,17 +45,18 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section></section>
-
         <section>
+          <h2>Success Stories</h2>
+
+          <p>Explore a collection of happy pets that reflect the adoption success stories at the heart of our mission.</p>
+
+          {dogImg && (
+            <img src={dogImg} alt="dog" width={300}/>
+          )}
           <div>
-            <section></section>
-            <section></section>
-            <section></section>
+            <button onClick={getDogImage}>Show Another Happy Pet</button>
           </div>
         </section>
-
-        <section></section>
       </main>
     </div>
   );
