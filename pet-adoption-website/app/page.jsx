@@ -16,7 +16,7 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-6 py-10 space-y-16">
         <section className="pets-featured">
           <h2 className="text-3xl font-bold text-center mb-6">Featured Pets</h2>
-          <div  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {featuredPets.map((pet) => (
               <div key={pet.id} className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition p-4 text-center">
                 <img src={pet.image} alt={pet.name} className="w-full h-56 object-contain rounded-xl bg-white" />
@@ -37,8 +37,8 @@ export default function HomePage() {
         </section>
 
         <section className="info-section">
-          <div  className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <section  className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <section className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
               <h3 className="text-xl font-bold mb-2">Browse Pets</h3>
               <p className="text-gray-600 mb-4">Search through dogs, cats, birds, and more to find your perfect match.</p>
               <Link href="/dashboard">
@@ -46,9 +46,9 @@ export default function HomePage() {
               </Link>
             </section>
 
-            <section  className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
+            <section className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
               <h3 className="text-xl font-bold mb-2">Apply</h3>
-              <p  className="text-gray-600 mb-4">Complete a quick adoption application form.</p>
+              <p className="text-gray-600 mb-4">Complete a quick adoption application form.</p>
               <Link href="/contact">
                 <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition">Apply Now - Contact Us</button>
               </Link>
@@ -61,11 +61,20 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
+          <h3 className="text-xl font-bold mb-2">Admin Page</h3>
+          <p className="text-gray-600 mb-4">*Requires adminstration privileges.</p>
+          <Link href="/admin">
+            <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition">Take Me There</button>
+          </Link>
+        </section>
+
+
 
         <section className="text-center">
           <h2 className="text-2xl font-bold mb-4">Ready to adopt?</h2>
           <Link href="/dashboard">
-            <button  className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-6 py-3 rounded-lg shadow-md transition font-medium">View Pets Available Now</button>
+            <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-6 py-3 rounded-lg shadow-md transition font-medium">View Pets Available Now</button>
           </Link>
         </section>
       </main>
