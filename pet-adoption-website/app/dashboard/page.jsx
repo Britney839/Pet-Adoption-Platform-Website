@@ -1,36 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavBar from '../../components/navbar';
 import Link from 'next/link';
 
 export default function DashboardPage() {
   const [selectedSpecies, setSelectedSpecies] = useState([]);
-  const pets = [
-    { id: 1, name: 'Snowflake', breed: 'Albino Budgie', age: 2, image: 'snowflake.webp', species: 'bird' },
-    { id: 2, name: 'Whiskers', breed: 'Siamese Cat', age: 1, image: 'whiskers.webp', species: 'cat' },
-    { id: 3, name: 'Buddy', breed: 'Golden Retriever', age: 3, image: 'buddy.jpg', species: 'dog' },
-    { id: 4, name: 'Nala', breed: 'Great Dane', age: 7, image: 'IMG-8099.jpg', species: 'dog' },
-    { id: 5, name: 'Charlie', breed: 'Doberman', age: 5, image: 'IMG-8100.jpg', species: 'dog' },
-    { id: 6, name: 'Cooper', breed: 'Havanese', age: 5, image: 'IMG-8096.jpg', species: 'dog' },
-    { id: 7, name: 'Henry', breed: 'Cavalier King Charles Spaniel', age: 1, image: 'IMG-8092.jpg', species: 'dog' },
-    { id: 8, name: 'Max', breed: 'Beagle', age: 7, image: 'IMG-8098.jpg', species: 'dog' },
-    { id: 9, name: 'Jack', breed: 'Cairne Terrier', age: 4, image: 'IMG-8094.jpg', species: 'dog' },
-    { id: 10, name: 'Oreo', breed: 'Shih tzu', age: 2, image: 'IMG-8097.jpg', species: 'dog' },
-  ];
+  const [pets, setPets] = useState([]);
+
+  useEffect(() => {
+    async function loadPets() {
+      try {
+        const res = await fetch("/api/pets");
+        const data = await res.json();
+        setPets(data);
+      } catch (err) {
+        console.error("Error loading pets:", err);
+      }
+    }
+
+    loadPets();
+  }, []);
 
   const handleCheckbox = (species) => {
-  setSelectedSpecies((prev) =>
-    prev.includes(species)
-      ? prev.filter((s) => s !== species)
-      : [...prev, species]
-  );
-};
+    setSelectedSpecies((prev) =>
+      prev.includes(species)
+        ? prev.filter((s) => s !== species)
+        : [...prev, species]
+    );
+  };
 
-const filteredPets =
-  selectedSpecies.length === 0
-    ? pets
-    : pets.filter((pet) => selectedSpecies.includes(pet.species));
-
+  const filteredPets =
+    selectedSpecies.length === 0
+      ? pets
+      : pets.filter((pet) => selectedSpecies.includes(pet.species));
 
   return (
     <div className="bg-[#fcf7ee] min-h-screen">
@@ -61,7 +63,7 @@ const filteredPets =
             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
               {filteredPets.map((pet) => (
-                <div key={pet.id} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 text-center w-full max-w-sm">
+                <div key={pet._id} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 text-center w-full max-w-sm">
                   <img src={pet.image} alt={pet.name}  className="w-full h-56 object-contain bg-white rounded-xl" />
                   <h3 className="text-xl font-bold mt-3">{pet.name}</h3>
                   <p className="text-gray-600">Breed: {pet.breed}</p>
