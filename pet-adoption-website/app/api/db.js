@@ -22,7 +22,7 @@ export async function connectToDB() {
     await client.connect();
        
     cachedClient = client;
-    cachedDb = cachedClient.db('entertainment')
+    cachedDb = cachedClient.db('pet_adoption')
         
     return {client: cachedClient, db: cachedDb}
 
