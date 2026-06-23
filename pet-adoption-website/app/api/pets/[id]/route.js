@@ -13,6 +13,7 @@ export async function PUT(request, { params }) {
             $set: {
                 name: body.name,
                 breed: body.breed,
+                species: body.species,
                 age: body.age,
                 description: body.description,
                 image: body.image
