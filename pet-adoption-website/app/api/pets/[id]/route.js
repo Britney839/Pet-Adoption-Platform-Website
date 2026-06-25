@@ -1,11 +1,12 @@
-import { connectToDB } from "../../db";
+import clientPromise from "../../db";
 import { ObjectId } from "mongodb";
 
 export async function PUT(request, { params }) {
 
     const body = await request.json();
 
-    const { db } = await connectToDB();
+       const client = await clientPromise;
+   const db = client.db("pet_adoption");
 
     await db.collection("pets").updateOne(
         { _id: new ObjectId(params.id) },
@@ -26,9 +27,11 @@ export async function PUT(request, { params }) {
     });
 }
 
+
 export async function DELETE(request, { params }) {
 
-    const { db } = await connectToDB();
+    const client = await clientPromise;
+    const db = client.db("pet_adoption");
 
     await db.collection("pets").deleteOne({
         _id: new ObjectId(params.id)

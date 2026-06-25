@@ -2,7 +2,7 @@
 
 export async function GET() {
     try {
-        const response = await fetch("https://dog.ceo/api/breeds/image/random");
+        const response = await fetch("https://dog.ceo/api/breeds/image/random", { cache: "no-store" });
 
         const data = await response.json();
         return Response.json(data);
