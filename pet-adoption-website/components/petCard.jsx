@@ -16,7 +16,7 @@ export default function PetCard({ pet }) {
           Adopted
         </button>
       ) : (
-        <Link href="/dashboard">
+        <Link href="/contact">
           <button className="mt-3 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">
             Adopt Me
           </button>
