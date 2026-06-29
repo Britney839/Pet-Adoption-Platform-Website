@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import NavBar from '../../components/navbar';
 import Link from 'next/link';
+import AdminPetCard from "../../components/AdminPetCard";
 
 export default function DashboardPage() {
   const [selectedSpecies, setSelectedSpecies] = useState([]);
@@ -144,23 +145,12 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
               {filteredPets.map((pet) => (
-                <div key={pet._id} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 text-center w-full max-w-sm">
-                  <img src={pet.image} alt={pet.name} className="w-full h-56 object-contain bg-white rounded-xl" />
-                  <h3 className="text-xl font-bold mt-3">{pet.name}</h3>
-                  <p className="text-gray-600">Breed: {pet.breed}</p>
-                  <p className="text-gray-500 text-sm">Age: {pet.age} years</p>
-                  <Link href="/contact">
-                    <button className="mt-3 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">Adopt Me</button>
-                  </Link>
-                  <button
-                    onClick={() => handleEdit(pet)}
-                    className="mt-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(pet._id)}
-                    className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">Delete (Adopted)
-                  </button>
-                </div>
+                <AdminPetCard
+                  key={pet._id}
+                  pet={pet}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
           </section>
@@ -171,7 +161,7 @@ export default function DashboardPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full">
               <h2 className="text-2xl font-bold mb-6">Edit Pet</h2>
-              
+
               <input
                 type="text"
                 placeholder="Name"
@@ -179,7 +169,7 @@ export default function DashboardPage() {
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                 className="w-full p-2 mb-4 border rounded-md"
               />
-              
+
               <input
                 type="text"
                 placeholder="Breed"
@@ -197,7 +187,7 @@ export default function DashboardPage() {
                 <option value="cat">Cat</option>
                 <option value="bird">Bird</option>
               </select>
-              
+
               <input
                 type="number"
                 placeholder="Age"
@@ -205,14 +195,14 @@ export default function DashboardPage() {
                 onChange={(e) => setEditForm({ ...editForm, age: e.target.value })}
                 className="w-full p-2 mb-4 border rounded-md"
               />
-              
+
               <textarea
                 placeholder="Description"
                 value={editForm.description}
                 onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                 className="w-full p-2 mb-4 border rounded-md"
               />
-              
+
               <input
                 type="text"
                 placeholder="Image filename (e.g. buddy.jpg)"
@@ -220,7 +210,7 @@ export default function DashboardPage() {
                 onChange={(e) => setEditForm({ ...editForm, imageName: e.target.value })}
                 className="w-full p-2 mb-6 border rounded-md"
               />
-              
+
               <div className="flex gap-4">
                 <button
                   onClick={handleSaveEdit}

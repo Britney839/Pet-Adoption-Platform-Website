@@ -1,5 +1,7 @@
 import NavBar from '../components/navbar';
 import Link from 'next/link';
+import PetCard from "../components/PetCard";
+
 export default function HomePage() {
 
   const featuredPets = [
@@ -18,15 +20,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-center mb-6">Featured Pets</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {featuredPets.map((pet) => (
-              <div key={pet.id} className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition p-4 text-center">
-                <img src={pet.image} alt={pet.name} className="w-full h-56 object-contain rounded-xl bg-white" />
-                <h3 className="text-xl font-bold mt-3">{pet.name}</h3>
-                <p className="text-gray-600">{pet.breed}</p>
-                <p className="text-gray-500 text-sm">{pet.age} years old</p>
-                <Link href="/dashboard">
-                  <button className="mt-3 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">Adopt Me</button>
-                </Link>
-              </div>
+              <PetCard key={pet.id} pet={pet} />
             ))}
           </div>
         </section>

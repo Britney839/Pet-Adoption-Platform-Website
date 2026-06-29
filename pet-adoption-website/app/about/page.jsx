@@ -8,13 +8,16 @@ export default function AboutPage() {
 
   async function getDogImage() {
     try {
-      const response = await fetch("/api");
+      const response = await fetch("/api?t=" + Date.now(), {
+      cache: "no-store",
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
+      console.log("Dog image URL:", data.message);
       setDogImg(data.message);
     } catch (error) {
       console.error("Error fetching dog image:", error.message);
