@@ -28,16 +28,21 @@ export async function PUT(request, { params }) {
 }
 
 
+
+
 export async function DELETE(request, { params }) {
+
+    const { id } = await params;
 
     const client = await clientPromise;
     const db = client.db("pet_adoption");
 
-    await db.collection("pets").deleteOne({
-        _id: new ObjectId(params.id)
+    const result = await db.collection("pets").deleteOne({
+        _id: new ObjectId(id)
     });
 
     return Response.json({
-        message: "Pet deleted"
+        message: "Pet deleted",
+        deletedCount: result.deletedCount
     });
 }

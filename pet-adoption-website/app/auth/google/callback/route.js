@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
-
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -21,11 +22,18 @@ export async function GET(request) {
 
     const { data } = await oauth2.userinfo.get();
 
+    const cookieStore = await cookies();
 
-    console.log(data);
+    cookieStore.set(
+        "session",
+        JSON.stringify(data),
+        {
+            httpOnly: true,
+            secure: false,
+            maxAge: 60 * 60 * 24,
+        }
+    );
 
-    return Response.json({
-        message: "Logged in successfully!",
-        user: data
-    });
+    redirect("/admin");
+
 }
