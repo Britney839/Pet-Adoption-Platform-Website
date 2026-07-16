@@ -1,6 +1,6 @@
 import NavBar from '../components/navbar';
 import Link from 'next/link';
-import PetCard from "../components/PetCard";
+import PetCard from "../components/petCard";
 
 export default function HomePage() {
 
