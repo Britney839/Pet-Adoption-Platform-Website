@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import clientPromise from "../db";
 
 export async function GET() {

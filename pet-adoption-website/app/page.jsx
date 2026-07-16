@@ -58,7 +58,7 @@ export default function HomePage() {
         <section className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
           <h3 className="text-xl font-bold mb-2">Admin Page</h3>
           <p className="text-gray-600 mb-4">*Requires adminstration privileges.</p>
-          <Link href="/admin">
+          <Link href="/login">
             <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition">Take Me There</button>
           </Link>
         </section>

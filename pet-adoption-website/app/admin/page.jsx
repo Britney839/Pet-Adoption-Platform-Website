@@ -1,54 +1,36 @@
-"use client";
-import { addPet } from "../actions/pets";
-import { useState } from "react";
-import NavBar from "../../components/navbar";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import AdminDashboard from "./AdminDashboard";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session");
+
+    if (!session) {
+        redirect("/login");
+    }
+
+    const user = JSON.parse(session.value);
+
     return (
-        <div className="bg-[#fcf7ee] min-h-screen">
-            <header>
-                <NavBar />
-            </header>
-            <main className="max-w-2xl mx-auto px-6 py-12">
-                <div className="bg-white rounded-2xl shadow-lg p-8">
-                    <h2 className="text-4xl font-bold mb-2 text-gray-800">Add a New Pet</h2>
-                    <p className="text-gray-600 mb-8">Fill out the form below to add a new pet to the adoption platform.</p>
-                    <form action={addPet} className="space-y-6">
+        <div className="bg-[#fcf7ee] min-h-screen px-6 py-12">
 
-                        <input name="name" placeholder="Name" className="w-full border p-2" />
-                        <input name="breed" placeholder="Breed" className="w-full border p-2" />
+            <h1 className="text-4xl font-bold text-gray-800">
+                Welcome {user.name}!
+            </h1>
 
-                        <select name="species" className="w-full border p-2">
-                            <option value="dog">Dog</option>
-                            <option value="cat">Cat</option>
-                            <option value="bird">Bird</option>
-                        </select>
+            <p className="text-gray-600 mt-2">{user.email}</p>
 
-                        <input name="age" type="number" placeholder="Age" className="w-full border p-2" />
+            <p className="text-sm text-[#ff9c6b] font-semibold mt-1">Brave Paws Administrator</p>
 
-                        <textarea
-                            name="description"
-                            placeholder="Description"
-                            className="w-full border p-2"
-                        />
+            <div className="mt-6 mb-10">
+                <a href="/auth/logout" className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white font-bold py-3 px-8 rounded-full transition shadow-md">
+                Logout
+            </a>
+            </div>
 
-                        <input
-                            name="image"
-                            placeholder="Image URL"
-                            className="w-full border p-2"
-                        />
-
-                        <button
-                            type="submit"
-                            className="w-full bg-[#ffb38a] hover:bg-[#ff9c6b] text-white font-bold py-3 rounded-lg"
-                        >
-                            Add Pet
-                        </button>
-
-                    </form>
-                </div>
-                <p className="text-center text-gray-600 mt-8 text-sm">* All fields are required</p>
-            </main>
-        </div>
-    );
+    <AdminDashboard />
+    </div>
+    )
 }

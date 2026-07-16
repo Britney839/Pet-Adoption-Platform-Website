@@ -20,7 +20,9 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadPets() {
       try {
-        const res = await fetch("/api/pets");
+        const res = await fetch("/api/pets", {
+          cache: "no-store"
+        });
         const data = await res.json();
         setPets(data);
       } catch (err) {

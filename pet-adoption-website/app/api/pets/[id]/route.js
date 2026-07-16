@@ -28,6 +28,16 @@ export async function PUT(request, context) {
 }
 
 
+
+
+export async function DELETE(request, { params }) {
+
+    const { id } = await params;
+
+    const client = await clientPromise;
+    const db = client.db("pet_adoption");
+
+    const result = await db.collection("pets").deleteOne({
 export async function DELETE(request, context) {
     const { id } = await context.params;
     const client = await clientPromise;
@@ -40,6 +50,7 @@ export async function DELETE(request, context) {
     console.log(result);
 
     return Response.json({
-        message: "Pet deleted"
+        message: "Pet deleted",
+        deletedCount: result.deletedCount
     });
 }
