@@ -45,28 +45,7 @@ export default function NavBar() {
           <li><Link href="/contact" className="hover:text-[#ff9c6b] transition">Contact</Link></li>
         </ul>
 
-        <div className="mt-4 flex items-center gap-3">
-          {user ? (
-            <>
-              <span className="text-sm font-semibold text-gray-700">
-                Signed in as {user.name || user.email}
-              </span>
-              <a
-                href="/auth/logout"
-                className="bg-[#ff6b6b] hover:bg-[#ff4f4f] text-white px-4 py-2 rounded-full text-sm font-medium"
-              >
-                Sign out
-              </a>
-            </>
-          ) : (
-            <a
-              href="/login"
-              className="bg-[#4285F4] hover:bg-[#357ae8] text-white px-4 py-2 rounded-full text-sm font-medium"
-            >
-              Sign in
-            </a>
-          )}
-        </div>
+
       </div>
     </header>
   );
