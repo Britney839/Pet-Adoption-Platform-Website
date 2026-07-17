@@ -9,7 +9,10 @@ const oauthClient = new google.auth.OAuth2(
 export const getGoogleAuthURL = () => {
     return oauthClient.generateAuthUrl({
         access_type: 'offline',
-        scope : [
+        prompt: 'consent',
+        include_granted_scopes: true,
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+        scope: [
             "openid",
             "email",
             "profile"
