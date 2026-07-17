@@ -1,18 +1,30 @@
+"use client";
+
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { useEffect, useState } from "react";
 
-export default async function NavBar() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get("session");
+function getSessionUser() {
+  if (typeof document === "undefined") return null;
 
-  let user = null;
-  if (sessionCookie) {
-    try {
-      user = JSON.parse(sessionCookie.value);
-    } catch {
-      user = null;
-    }
+  const cookies = document.cookie.split(";").map((item) => item.trim());
+  const sessionCookie = cookies.find((item) => item.startsWith("session="));
+
+  if (!sessionCookie) return null;
+
+  try {
+    const value = decodeURIComponent(sessionCookie.split("=")[1]);
+    return JSON.parse(value);
+  } catch {
+    return null;
   }
+}
+
+export default function NavBar() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setUser(getSessionUser());
+  }, []);
 
   return (
     <header className="bg-[#f0bea2] shadow-sm">
