@@ -47,10 +47,10 @@ export async function GET(request) {
                 maxAge: 60 * 60 * 24,
             }
         );
-
-        redirect('/admin');
     } catch (err) {
         console.error('Google auth callback failed:', err);
         redirect('/login?error=Google%20sign-in%20failed');
     }
+
+    redirect('/admin');
 }

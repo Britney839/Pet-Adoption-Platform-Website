@@ -2,9 +2,10 @@ import { getGoogleAuthURL } from "../../googleOauthUtils";
 
 
 
-export default function LogInPage({ searchParams }) {
+export default async function LogInPage({ searchParams }) {
+    const params = await searchParams;
     const googleURL = getGoogleAuthURL();
-    const errorMessage = searchParams?.error ? decodeURIComponent(searchParams.error) : null;
+    const errorMessage = params?.error ? decodeURIComponent(params.error) : null;
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#ffb38a] to-[#ff9c6b]">
