@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { upsertGoogleUser, createSessionTokenForUser } from '../../../../lib/auth.js';
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -36,17 +37,27 @@ export async function GET(request) {
 
         const { data } = await oauth2.userinfo.get();
 
+        if (!data?.email) {
+            redirect('/login?error=Google%20user%20email%20missing');
+        }
+
+        const user = await upsertGoogleUser({
+            email: data.email,
+            name: data.name,
+            picture: data.picture,
+            googleId: data.id,
+        });
+
+        const sessionToken = createSessionTokenForUser(user);
         const cookieStore = await cookies();
 
-        cookieStore.set(
-            'session',
-            JSON.stringify(data),
-            {
-                httpOnly: true,
-                secure: false,
-                maxAge: 60 * 60 * 24,
-            }
-        );
+        cookieStore.set('session', sessionToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 60 * 60 * 24,
+        });
     } catch (err) {
         console.error('Google auth callback failed:', err);
         redirect('/login?error=Google%20sign-in%20failed');

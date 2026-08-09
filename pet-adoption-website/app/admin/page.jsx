@@ -1,24 +1,22 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import AdminDashboard from "./AdminDashboard";
+import { getUserFromSession } from "../../lib/auth.js";
 
 export default async function AdminPage() {
+  const cookieStore = await cookies();
+  const user = await getUserFromSession(cookieStore);
 
-    const cookieStore = await cookies();
-    const session = cookieStore.get("session");
+  if (!user) {
+    redirect("/login");
+  }
 
-    if (!session) {
-        redirect("/login");
-    }
+  return (
+    <div className="bg-[#fcf7ee] min-h-screen px-6 py-12">
 
-    const user = JSON.parse(session.value);
-
-    return (
-        <div className="bg-[#fcf7ee] min-h-screen px-6 py-12">
-
-            <h1 className="text-4xl font-bold text-gray-800">
-                Welcome {user.name}!
-            </h1>
+      <h1 className="text-4xl font-bold text-gray-800">
+        Welcome {user.name}!
+      </h1>
 
             <p className="text-gray-600 mt-2">{user.email}</p>
 
