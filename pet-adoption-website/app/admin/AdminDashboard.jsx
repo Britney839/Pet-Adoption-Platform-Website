@@ -87,7 +87,7 @@ export default function AdminPage() {
                             name="image"
                             value={newPet.image}
                             onChange={(e) => handleChange("image", e.target.value)}
-                            placeholder="Image URL"
+                            placeholder="Image URL (e.g., /images/stella.jpg)"
                             className="w-full border p-2"
                         />
 
