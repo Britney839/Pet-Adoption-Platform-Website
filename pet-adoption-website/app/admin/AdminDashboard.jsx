@@ -2,6 +2,7 @@
 import { addPet } from "../actions/pets";
 import { useState } from "react";
 import NavBar from "../../components/navbar";
+import GenerateListingButton from "../../components/GenerateListingButton";
 
 export default function AdminPage() {
 
@@ -45,6 +46,7 @@ export default function AdminPage() {
                         >
                             Add Pet
                         </button>
+                        <GenerateListingButton pet={{ name: "", species: "", breed: "", age: 0, intakeNotes: "" }} />
 
                     </form>
                 </div>

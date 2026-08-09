@@ -1,6 +1,6 @@
 import { generateObject } from "ai";
 import { groq } from "@ai-sdk/groq";
-import { petListingSchema } from "@/lib/schemas";
+import { petListingSchema } from "../../../lib/schemas/petListing.js";
 
 export async function POST(req) {
   const { name, species, breed, age, intakeNotes } = await req.json();
