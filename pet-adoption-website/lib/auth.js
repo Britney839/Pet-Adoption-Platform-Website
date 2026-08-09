@@ -72,6 +72,7 @@ export async function upsertGoogleUser({ email, name, picture, googleId }) {
 
   const client = await clientPromise;
   const db = client.db("pet_adoption");
+
   const result = await db.collection("users").findOneAndUpdate(
     { email },
     {
@@ -81,5 +82,14 @@ export async function upsertGoogleUser({ email, name, picture, googleId }) {
     { upsert: true, returnDocument: "after" }
   );
 
-  return result.value;
+  if (result.value) {
+    return result.value;
+  }
+
+  const user = await db.collection("users").findOne({ email });
+  if (!user) {
+    throw new Error("Failed to create or load the Google user record");
+  }
+
+  return user;
 }
