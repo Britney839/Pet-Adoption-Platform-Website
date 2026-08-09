@@ -1,11 +1,15 @@
 "use client";
 import { useState } from "react";
 
-export default function GenerateListingButton({ pet }) {
+export default function GenerateListingButton({ pet, onListingGenerated }) {
   const [listing, setListing] = useState(pet.listing ?? null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const isExistingPet = Boolean(pet?._id);
+  const canGenerate = Boolean(
+    pet?.name && pet?.breed && pet?.species && pet?.age !== "" && pet?.intakeNotes
+  );
 
   async function handleGenerate() {
     setLoading(true);
@@ -23,10 +27,18 @@ export default function GenerateListingButton({ pet }) {
     });
     const data = await res.json();
     setListing(data);
+    if (onListingGenerated) {
+      onListingGenerated(data);
+    }
     setLoading(false);
   }
 
   async function handleSave() {
+    if (!isExistingPet) {
+      console.error("Cannot save listing: pet._id is missing");
+      return;
+    }
+
     setSaving(true);
     const res = await fetch(`/api/pets/${pet._id}`, {
       method: "PATCH",
@@ -39,9 +51,15 @@ export default function GenerateListingButton({ pet }) {
 
   return (
     <div>
-      <button onClick={handleGenerate} disabled={loading}>
+      <button type="button" onClick={handleGenerate} disabled={loading || !canGenerate}>
         {loading ? "Writing listing..." : "Generate AI Listing"}
       </button>
+
+      {!canGenerate && (
+        <p className="text-sm text-gray-500 mt-2">
+          Fill in all pet fields and staff notes before generating a listing.
+        </p>
+      )}
 
       {listing && (
         <div className="mt-4 rounded-lg border p-4 space-y-2">
@@ -69,11 +87,17 @@ export default function GenerateListingButton({ pet }) {
           <p className="italic font-medium">"{listing.adoptionPitch}"</p>
           <span className="rounded bg-blue-100 px-2 py-1 text-xs">{listing.category}</span>
 
-          <div className="pt-2">
-            <button onClick={handleSave} disabled={saving}>
-              {saving ? "Saving..." : saved ? "Saved ✓" : "Save Listing to Pet"}
-            </button>
-          </div>
+          {isExistingPet ? (
+            <div className="pt-2">
+              <button type="button" onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : saved ? "Saved ✓" : "Save Listing to Pet"}
+              </button>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 mt-2">
+              This listing will be saved when you submit the new pet form.
+            </p>
+          )}
         </div>
       )}
     </div>
