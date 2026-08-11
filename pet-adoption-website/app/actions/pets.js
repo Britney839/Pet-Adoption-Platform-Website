@@ -8,16 +8,33 @@ export async function addPet(formData){
     const age = formData.get("age");
     const description = formData.get("description");
     const image = formData.get("image");
+    const listingRaw = formData.get("listing");
+
+    let listing;
+    if (listingRaw) {
+        try {
+            listing = JSON.parse(listingRaw);
+        } catch (error) {
+            listing = undefined;
+        }
+    }
 
     const client = await clientPromise;
     const db = client.db("pet_adoption");
 
-    await db.collection("pets").insertOne({
+    const pet = {
         name,
         breed,
         species,
         age: Number(age),
         description,
         image,
-    });
+    };
+
+    if (listing) {
+        pet.listing = listing;
+        pet.listingGeneratedAt = new Date();
+    }
+
+    await db.collection("pets").insertOne(pet);
 }
