@@ -1,6 +1,6 @@
 "use server";
 import clientPromise from "../api/db";
-import { petListingSchema } from "../schemas/petListingSchema";
+import { petListingSchema } from "../../lib/schemas/petListing.js";
 
 export async function addPet(formData){
     const name = formData.get("name");

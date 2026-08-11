@@ -1,6 +1,6 @@
 import clientPromise from "../../db";
 import { ObjectId } from "mongodb";
-import { petListingSchema } from "../../schemas/petListingSchema";
+import { petListingSchema } from "../../../../lib/schemas/petListing.js";
 
 export async function PUT(request, context) {
     const { id } = await context.params;
