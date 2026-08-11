@@ -1,5 +1,6 @@
 import clientPromise from "../../db";
 import { ObjectId } from "mongodb";
+import { petListingSchema } from "../../../../lib/schemas/petListing.js";
 
 export async function PUT(request, context) {
     const { id } = await context.params;
@@ -51,6 +52,11 @@ export async function PATCH(request, context) {
 
     if (!body.listing) {
         return Response.json({ error: "Missing listing data" }, { status: 400 });
+    }
+
+    const validationResult = petListingSchema.safeParse(body.listing);
+    if (!validationResult.success) {
+        return Response.json({ error: "Invalid listing data" }, { status: 400 });
     }
 
     const client = await clientPromise;
