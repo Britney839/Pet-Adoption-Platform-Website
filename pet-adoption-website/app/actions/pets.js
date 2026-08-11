@@ -1,5 +1,6 @@
 "use server";
 import clientPromise from "../api/db";
+import { petListingSchema } from "../schemas/petListingSchema";
 
 export async function addPet(formData){
     const name = formData.get("name");
@@ -14,6 +15,11 @@ export async function addPet(formData){
     if (listingRaw) {
         try {
             listing = JSON.parse(listingRaw);
+            const validationResult = petListingSchema.safeParse(listing);
+            if (!validationResult.success) {
+                throw new Error("Invalid listing data");
+            }
+            listing = validationResult.data;
         } catch (error) {
             listing = undefined;
         }
