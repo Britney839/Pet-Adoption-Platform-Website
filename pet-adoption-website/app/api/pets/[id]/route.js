@@ -9,18 +9,29 @@ export async function PUT(request, context) {
     const client = await clientPromise;
     const db = client.db("pet_adoption");
 
+    const updateFields = {
+        name: body.name,
+        breed: body.breed,
+        species: body.species,
+        age: body.age,
+        description: body.description,
+        image: body.image,
+        intakeNotes: body.intakeNotes ?? ""
+    };
+
+    if (body.listing) {
+        const validationResult = petListingSchema.safeParse(body.listing);
+        if (!validationResult.success) {
+            return Response.json({ error: "Invalid listing data" }, { status: 400 });
+        }
+
+        updateFields.listing = validationResult.data;
+        updateFields.listingGeneratedAt = new Date();
+    }
+
     await db.collection("pets").updateOne(
         { _id: new ObjectId(id) },
-        {
-            $set: {
-                name: body.name,
-                breed: body.breed,
-                species: body.species,
-                age: body.age,
-                description: body.description,
-                image: body.image
-            }
-        }
+        { $set: updateFields }
     );
 
     return Response.json({

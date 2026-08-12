@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export default function GenerateListingButton({ pet, onListingGenerated }) {
-  const [listing, setListing] = useState(pet.listing ?? null);
+  const [listing, setListing] = useState(() => pet?.listing ?? null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -84,7 +84,7 @@ export default function GenerateListingButton({ pet, onListingGenerated }) {
             ))}
           </div>
 
-          <p className="italic font-medium">"{listing.adoptionPitch}"</p>
+          <p className="italic font-medium">“{listing.adoptionPitch}”</p>
           <span className="rounded bg-blue-100 px-2 py-1 text-xs">{listing.category}</span>
 
           {isExistingPet ? (

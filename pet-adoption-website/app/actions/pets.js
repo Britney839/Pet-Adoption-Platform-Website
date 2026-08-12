@@ -9,6 +9,7 @@ export async function addPet(formData){
     const age = formData.get("age");
     const description = formData.get("description");
     const image = formData.get("image");
+    const intakeNotes = formData.get("intakeNotes");
     const listingRaw = formData.get("listing");
 
     let listing;
@@ -35,6 +36,7 @@ export async function addPet(formData){
         age: Number(age),
         description,
         image,
+        intakeNotes,
     };
 
     if (listing) {

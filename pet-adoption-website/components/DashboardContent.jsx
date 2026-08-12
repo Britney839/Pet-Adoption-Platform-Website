@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import AdminPetCard from "./AdminPetCard";
+import GenerateListingButton from "./GenerateListingButton";
 
 export default function DashboardContent() {
   const [selectedSpecies, setSelectedSpecies] = useState([]);
@@ -14,7 +15,9 @@ export default function DashboardContent() {
     age: "",
     description: "",
     imageName: "",
+    intakeNotes: "",
   });
+  const [editListing, setEditListing] = useState(null);
 
   useEffect(() => {
     async function loadPets() {
@@ -31,6 +34,14 @@ export default function DashboardContent() {
 
     loadPets();
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = editingPet ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [editingPet]);
 
   const handleCheckbox = (species) => {
     setSelectedSpecies((prev) =>
@@ -51,8 +62,9 @@ export default function DashboardContent() {
   }
 
   function handleEdit(pet) {
-    const imageName = pet.image.replace(/^\//, "");
+    const imageName = pet.image ? pet.image.replace(/^\//, "") : "";
     setEditingPet(pet._id);
+    setEditListing(pet.listing ?? null);
     setEditForm({
       name: pet.name,
       breed: pet.breed,
@@ -60,6 +72,7 @@ export default function DashboardContent() {
       age: pet.age,
       description: pet.description,
       imageName: imageName,
+      intakeNotes: pet.intakeNotes || "",
     });
   }
 
@@ -73,6 +86,8 @@ export default function DashboardContent() {
       age: Number(editForm.age),
       description: editForm.description,
       image: `/${editForm.imageName}`,
+      intakeNotes: editForm.intakeNotes,
+      ...(editListing ? { listing: editListing } : {}),
     };
 
     try {
@@ -100,6 +115,7 @@ export default function DashboardContent() {
 
   function handleCancelEdit() {
     setEditingPet(null);
+    setEditListing(null);
     setEditForm({
       name: "",
       breed: "",
@@ -107,6 +123,7 @@ export default function DashboardContent() {
       age: "",
       description: "",
       imageName: "",
+      intakeNotes: "",
     });
   }
 
@@ -177,8 +194,8 @@ export default function DashboardContent() {
       </div>
 
       {editingPet && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
+          <div className="mx-auto my-10 w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
             <h2 className="text-2xl font-bold mb-6">Edit Pet</h2>
 
             <input
@@ -227,10 +244,28 @@ export default function DashboardContent() {
               placeholder="Image filename (e.g. buddy.jpg)"
               value={editForm.imageName}
               onChange={(e) => setEditForm({ ...editForm, imageName: e.target.value })}
-              className="w-full p-2 mb-6 border rounded-md"
+              className="w-full p-2 mb-4 border rounded-md"
             />
 
-            <div className="flex gap-4">
+            <textarea
+              placeholder="Staff notes"
+              value={editForm.intakeNotes}
+              onChange={(e) => setEditForm({ ...editForm, intakeNotes: e.target.value })}
+              className="w-full p-2 mb-4 border rounded-md"
+              rows={4}
+            />
+
+            <GenerateListingButton
+              pet={{
+                ...editForm,
+                _id: editingPet,
+                intakeNotes: editForm.intakeNotes,
+                listing: editListing,
+              }}
+              onListingGenerated={setEditListing}
+            />
+
+            <div className="flex gap-4 mt-6">
               <button
                 onClick={handleSaveEdit}
                 className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition font-medium"
@@ -255,7 +290,7 @@ export default function DashboardContent() {
           <Link href="/contact" className="text-orange-500 font-semibold">
             contact us
           </Link>{" "}
-          and we'll help you find the perfect match!
+          and we&apos;ll help you find the perfect match!
         </p>
       </section>
     </main>
