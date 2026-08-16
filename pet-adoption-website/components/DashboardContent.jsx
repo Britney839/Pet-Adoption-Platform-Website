@@ -16,6 +16,19 @@ export default function DashboardContent() {
     imageName: "",
   });
 
+  const [showMatcher, setShowMatcher] = useState(false);
+
+  const [matchAnswers, setMatchAnswers] = useState({
+    species: "",
+    activityLevel: "",
+    homeType: "",
+    hasChildren: "",
+    hasOtherPets: "",
+    experience: "",
+  });
+
+  const [recommendedPets, setRecommendedPets] = useState([]);
+
   useEffect(() => {
     async function loadPets() {
       try {
@@ -147,6 +160,114 @@ export default function DashboardContent() {
             <label className="flex items-center gap-2">
               <input type="checkbox" id="bird" onChange={() => handleCheckbox("bird")} /> Bird
             </label>
+            
+            <button
+              onClick={() => setShowMatcher(!showMatcher)}
+              className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium"
+            >
+              Find My Pet Match
+            </button>
+            {showMatcher && (
+              <div className="mt-4 space-y-2">
+                <h4 className="font-semibold mb-2" >Find Your Perfect Pet</h4>
+
+                <p>Answer a few questions to find your ideal companion!</p>
+
+                <div>
+                  <label>
+                    What type of pet are you looking for?
+                    </label>
+                    <select
+                      value={matchAnswers.species}
+                      onChange={(e) => setMatchAnswers({ ...matchAnswers, species: e.target.value })}
+                      className="w-full p-2 mb-4 border rounded-md"
+                    >
+                      <option value="">Select species</option>
+                      <option value="dog">Dog</option>
+                      <option value="cat">Cat</option>
+                      <option value="bird">Bird</option>
+                    </select>
+                </div>
+
+                <div>
+                  <label>
+                    How active is your lifestyle?
+                  </label>
+                  <select
+                    value={matchAnswers.activityLevel}
+                    onChange={(e) => setMatchAnswers({ ...matchAnswers, activityLevel: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-md"
+                  >
+                    <option value="">Select activity level</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                
+                </div>
+                <div>
+                  <label>
+                    What type of home do you have?
+                  </label>
+                  <select
+                    value={matchAnswers.homeType}
+                    onChange={(e) => setMatchAnswers({ ...matchAnswers, homeType: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-md"
+                  >
+                    <option value="">Select home type</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="house">House</option>
+                    <option value="farm">House with a yard</option>
+                  </select>
+                </div>
+                <div>
+                  <label>
+                    Do you have children?
+                  </label>
+                  <select
+                    value={matchAnswers.hasChildren}
+                    onChange={(e) => setMatchAnswers({ ...matchAnswers, hasChildren: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-md"
+                  >
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                <div>
+                  <label>
+                    Do you have other pets?
+                  </label>
+                  <select
+                    value={matchAnswers.hasOtherPets}
+                    onChange={(e) => setMatchAnswers({ ...matchAnswers, hasOtherPets: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-md"
+                  >
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                <div>
+                  <label>
+                    Do you have experience with pets?
+                  </label>
+                  <select
+                    value={matchAnswers.experience}
+                    onChange={(e) => setMatchAnswers({ ...matchAnswers, experience: e.target.value })}
+                    className="w-full p-2 mb-4 border rounded-md"
+                  >
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+                <button className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium">
+                  Find My Match
+                </button>
+              </div>
+            )}
           </section>
         </aside>
 
