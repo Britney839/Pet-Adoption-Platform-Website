@@ -138,7 +138,7 @@ export default function DashboardContent() {
     }
   }
 
-  function calculateMatchScore(pet){
+  function calculateMatchScore(pet) {
     let score = 0;
 
     const listing = pet.listing || {};
@@ -149,99 +149,155 @@ export default function DashboardContent() {
 
 
     // children
-    if (matchAnswers.hasChildren == "yes"){
+    if (matchAnswers.hasChildren == "yes") {
       if (
         goodWith.some((item) => item.toLowerCase().includes("kid")
-      )
-      ){
-        score += 3
-      } 
-      } else {
-        score += 1
-      }
-      // other pets
-      if (matchAnswers.hasOtherPets == "yes"){
-        if(goodWith.some((item) => ["dogs", "cats", "pets", "animals"].some((word) => item.toLowerCase().includes(word)))){
-          score += 3
-        }
-      } else{
-        score += 1
-      }
-    
-
-      //home type
-      if (matchAnswers.homeType == "apartment"){
-        if (
-          idealHome.includes("apartment") || idealHome.includes("small") || idealHome.includes("low")){
-            score += 3
-          } 
-        
-      }
-
-      if (matchAnswers.homeType == "house"){
-        if(
-          idealHome.includes("house") || idealHome.includes("home")
-        ){
-          score += 2
-        }
-      }
-
-      if (matchAnswers.homeType == "houseWithYard"){
-        if (
-          idealHome.includes("yard") || idealHome.includes("outdoor") || idealHome.includes("active")
-        ){
-          score +=3
-        }
-      }
-
-      //activity lvl
-      if (matchAnswers.activityLevel == "low"){
-        if (
-          traits.some((trait) => ["calm", "gentle", "relaxed", "quiet"].some((word) => trait.toLowerCase().includes(word))) || category.includes("low")
-        ) {
-          score += 3
-        }
-      }
-
-      if (matchAnswers.activityLevel == "medium"){
-        if (
-          traits.some((trait) =>["friendly", "playful", "social"].some((word) => trait.toLowerCase().includes(word)))
-        ){
-          score += 3
-        }
-      }
-
-      if (matchAnswers.activityLevel == "high"){
-        if (
-          traits.some((trait) => ["active", "energetic", "playful", "adventurous"].some((word) => trait.toLowerCase().includes(word)))
-        ){
-          score += 3
-        }
-      }
-
-      //XP
-      if (matchAnswers.experience == "yes"){
+        )
+      ) {
         score += 3
       }
-
-      if (matchAnswers.experience == "no"){
-        score += 2
+    } else {
+      score += 1
+    }
+    // other pets
+    if (matchAnswers.hasOtherPets == "yes") {
+      if (goodWith.some((item) => ["dogs", "cats", "pets", "animals"].some((word) => item.toLowerCase().includes(word)))) {
+        score += 3
       }
-      
-      return score;
+    } else {
+      score += 1
+    }
+
+
+    //home type
+    if (matchAnswers.homeType == "apartment") {
+      if (
+        idealHome.includes("apartment") || idealHome.includes("small") || idealHome.includes("low")) {
+        score += 3
+      }
 
     }
-  
 
-  function handleFindMatches(){
+    if (matchAnswers.homeType == "house") {
+      if (
+        idealHome.includes("house") || idealHome.includes("home")
+      ) {
+        score += 2
+      }
+    }
+
+    if (matchAnswers.homeType == "houseWithYard") {
+      if (
+        idealHome.includes("yard") || idealHome.includes("outdoor") || idealHome.includes("active")
+      ) {
+        score += 3
+      }
+    }
+
+    //activity lvl
+    if (matchAnswers.activityLevel == "low") {
+      if (
+        traits.some((trait) => ["calm", "gentle", "relaxed", "quiet"].some((word) => trait.toLowerCase().includes(word))) || category.includes("low")
+      ) {
+        score += 3
+      }
+    }
+
+    if (matchAnswers.activityLevel == "medium") {
+      if (
+        traits.some((trait) => ["friendly", "playful", "social"].some((word) => trait.toLowerCase().includes(word)))
+      ) {
+        score += 3
+      }
+    }
+
+    if (matchAnswers.activityLevel == "high") {
+      if (
+        traits.some((trait) => ["active", "energetic", "playful", "adventurous"].some((word) => trait.toLowerCase().includes(word)))
+      ) {
+        score += 3
+      }
+    }
+
+    //XP
+    if (matchAnswers.experience == "yes") {
+      score += 3
+    }
+
+    if (matchAnswers.experience == "no") {
+      score += 2
+    }
+
+    return score;
+
+  }
+
+  function getMatchReasons(pet) {
+    const reasons = [];
+    const listing = pet.listing || {};
+    const goodWith = listing.goodWith || [];
+    const traits = listing.personalityTraits || [];
+    const idealHome = (listing.idealHomeType || "").toLowerCase();
+    const category = (listing.category || "").toLowerCase();
+
+    if (matchAnswers.hasChildren == "yes" && goodWith.some((item) => item.toLowerCase().includes("kid"))) {
+      reasons.push("is a good fit for homes with children");
+    }
+
+    if (matchAnswers.hasOtherPets == "yes" && goodWith.some((item) => ["dogs", "cats", "pets", "animals"].some((word) => item.toLowerCase().includes(word)))) {
+      reasons.push("is comfortable inhomes with other pets");
+    }
+
+    if (matchAnswers.homeType == "apartment" && (idealHome.includes("apartment") || idealHome.includes("small") || idealHome.includes("low"))) {
+      reasons.push("could suit an apartment lifestyle");
+    }
+
+    if (matchAnswers.homeType == "house" && (idealHome.includes("house") || idealHome.includes("home"))) {
+      reasons.push("would love a home environment");
+    }
+
+    if (matchAnswers.homeType == "houseWithYard" && (idealHome.includes("yard") || idealHome.includes("outdoor") || idealHome.includes("active"))) {
+      reasons.push("could thrive in a home with a yard");
+    }
+
+    if (matchAnswers.activityLevel == "low" && traits.some((trait) => ["calm", "gentle", "relaxed", "quiet"].some((word) => trait.toLowerCase().includes(word))) || category.includes("low")) {
+      reasons.push("has personality traits that match your low activity level");
+    }
+
+    if (matchAnswers.activityLevel == "medium" && traits.some((trait) => ["friendly", "playful", "social"].some((word) => trait.toLowerCase().includes(word)))) {
+      reasons.push("has a friendly and playful personality that match your medium activity level");
+    }
+
+    if (matchAnswers.activityLevel == "high" && traits.some((trait) => ["active", "energetic", "playful", "adventurous"].some((word) => trait.toLowerCase().includes(word)))) {
+      reasons.push("has a high activity level that matches your lifestyle");
+    }
+
+    if (matchAnswers.experience == "yes") {
+      reasons.push("is suitable for experienced pet owners");
+    }
+
+    if (matchAnswers.experience == "no") {
+      reasons.push("is suitable for first-time pet owners");
+    }
+
+    return reasons;
+  }
+
+  function getMatchPercentage(score) {
+    const maxScore = 15;
+    return Math.round((score / maxScore) * 100);
+  }
+
+
+  function handleFindMatches() {
     const unanswered = Object.values(matchAnswers).some((answer) => answer == "")
 
-    if (unanswered){
+    if (unanswered) {
       alert("Please answer all questions")
       return;
     }
 
-    const scoredPets = pets.map((pet) => ({...pet, matchScore:calculateMatchScore(pet), })).sort((a, b) => b.matchScore - a.matchScore).slice(0,3)
+    const scoredPets = pets.map((pet) => ({ ...pet, matchScore: calculateMatchScore(pet), })).sort((a, b) => b.matchScore - a.matchScore).slice(0, 3)
 
     setRecommendedPets(scoredPets)
   }
@@ -267,7 +323,7 @@ export default function DashboardContent() {
             <label className="flex items-center gap-2">
               <input type="checkbox" id="bird" onChange={() => handleCheckbox("bird")} /> Bird
             </label>
-            
+
             <button
               onClick={() => setShowMatcher(!showMatcher)}
               className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium"
@@ -294,7 +350,7 @@ export default function DashboardContent() {
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
                   </select>
-                
+
                 </div>
                 <div>
                   <label>
@@ -354,35 +410,94 @@ export default function DashboardContent() {
                   </select>
                 </div>
 
-                <button onClick= {handleFindMatches} className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium">
+                <button onClick={handleFindMatches} className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium">
                   Find My Match
                 </button>
                 {recommendedPets.length > 0 && (
                   <div className="mt-6">
-                  <h3 className="text-xl font-bold mb-4">
-                    Your Top Pet Matches
-                  </h3>
+                    {recommendedPets.length > 0 && (
+                      <div className="mt-8">
+                        <h3 className="text-2xl font-bold mb-4 text-center">
+                          Your Pet Matches
+                        </h3>
 
-                  {recommendedPets.map((pet, index) => (
-                    <div
-                      key={pet._id}
-                      className="border rounded-lg p-4 mb-3"
-                    >
-                    <p className="font-bold">
-                       #{index + 1} {pet.name}
-                    </p>
 
-                    <p>
-                      {pet.breed} - {pet.age} years old
-                    </p>
+                        <div className="bg-[#fff7f2] border-2 border-[#ffb38a] rounded-2xl p-5 mb-5 shadow-sm">
+                          <p className="text-sm font-semibold text-orange-500 uppercase tracking-wide">
+                            Best Match
+                          </p>
 
-                    <p className="font-semibold mt-2">
-                      Match Score: {pet.matchScore}
-                    </p>
-                </div>
-              ))}
-            </div>
-            )}
+                          <h4 className="text-2xl font-bold mt-1">
+                            {recommendedPets[0].name}
+                          </h4>
+
+                          <p className="text-gray-600">
+                            {recommendedPets[0].breed} • {recommendedPets[0].age} years old
+                          </p>
+
+                          <div className="mt-4">
+                            <p className="font-bold text-lg">
+                              {getMatchPercentage(recommendedPets[0].matchScore)}% Match
+                            </p>
+
+                            <div className="w-full bg-gray-200 rounded-full h-3 mt-2">
+                              <div
+                                className="bg-[#ff9c6b] h-3 rounded-full"
+                                style={{
+                                  width: `${getMatchPercentage(
+                                    recommendedPets[0].matchScore
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 text-gray-700">
+                            <p className="font-semibold mb-2">
+                              Why {recommendedPets[0].name} may be a great match:
+                            </p>
+
+                            <ul className="list-disc pl-5 space-y-1">
+                              {getMatchReasons(recommendedPets[0]).map((reason, index) => (
+                                <li key={index}>
+                                  {recommendedPets[0].name} {reason}.
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+
+
+                        <h4 className="font-bold text-lg mb-3">
+                          Other Great Matches
+                        </h4>
+
+                        {recommendedPets.slice(1).map((pet, index) => (
+                          <div
+                            key={pet._id}
+                            className="border rounded-xl p-4 mb-3 bg-white"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-bold">
+                                  #{index + 2} {pet.name}
+                                </p>
+
+                                <p className="text-gray-600">
+                                  {pet.breed} - {pet.age} years old
+                                </p>
+                              </div>
+
+                              <p className="font-bold text-orange-500">
+                                {getMatchPercentage(pet.matchScore)}%
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </section>
