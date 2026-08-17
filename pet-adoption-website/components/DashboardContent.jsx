@@ -19,7 +19,6 @@ export default function DashboardContent() {
   const [showMatcher, setShowMatcher] = useState(false);
 
   const [matchAnswers, setMatchAnswers] = useState({
-    species: "",
     activityLevel: "",
     homeType: "",
     hasChildren: "",
@@ -139,6 +138,114 @@ export default function DashboardContent() {
     }
   }
 
+  function calculateMatchScore(pet){
+    let score = 0;
+
+    const listing = pet.listing || {};
+    const goodWith = listing.goodWith || [];
+    const traits = listing.personalityTraits || [];
+    const idealHome = (listing.idealHomeType || "").toLowerCase();
+    const category = (listing.category || "").toLowerCase();
+
+
+    // children
+    if (matchAnswers.hasChildren == "yes"){
+      if (
+        goodWith.some((item) => item.toLowerCase().includes("kid")
+      )
+      ){
+        score += 3
+      } 
+      } else {
+        score += 1
+      }
+      // other pets
+      if (matchAnswers.hasOtherPets == "yes"){
+        if(goodWith.some((item) => ["dogs", "cats", "pets", "animals"].some((word) => item.toLowerCase().includes(word)))){
+          score += 3
+        }
+      } else{
+        score += 1
+      }
+    
+
+      //home type
+      if (matchAnswers.homeType == "apartment"){
+        if (
+          idealHome.includes("apartment") || idealHome.includes("small") || idealHome.includes("low")){
+            score += 3
+          } 
+        
+      }
+
+      if (matchAnswers.homeType == "house"){
+        if(
+          idealHome.includes("house") || idealHome.includes("home")
+        ){
+          score += 2
+        }
+      }
+
+      if (matchAnswers.homeType == "houseWithYard"){
+        if (
+          idealHome.includes("yard") || idealHome.includes("outdoor") || idealHome.includes("active")
+        ){
+          score +=3
+        }
+      }
+
+      //activity lvl
+      if (matchAnswers.activityLevel == "low"){
+        if (
+          traits.some((trait) => ["calm", "gentle", "relaxed", "quiet"].some((word) => trait.toLowerCase().includes(word))) || category.includes("low")
+        ) {
+          score += 3
+        }
+      }
+
+      if (matchAnswers.activityLevel == "medium"){
+        if (
+          traits.some((trait) =>["friendly", "playful", "social"].some((word) => trait.toLowerCase().includes(word)))
+        ){
+          score += 3
+        }
+      }
+
+      if (matchAnswers.activityLevel == "high"){
+        if (
+          traits.some((trait) => ["active", "energetic", "playful", "adventurous"].some((word) => trait.toLowerCase().includes(word)))
+        ){
+          score += 3
+        }
+      }
+
+      //XP
+      if (matchAnswers.experience == "yes"){
+        score += 3
+      }
+
+      if (matchAnswers.experience == "no"){
+        score += 2
+      }
+      
+      return score;
+
+    }
+  
+
+  function handleFindMatches(){
+    const unanswered = Object.values(matchAnswers).some((answer) => answer == "")
+
+    if (unanswered){
+      alert("Please answer all questions")
+      return;
+    }
+
+    const scoredPets = pets.map((pet) => ({...pet, matchScore:calculateMatchScore(pet), })).sort((a, b) => b.matchScore - a.matchScore).slice(0,3)
+
+    setRecommendedPets(scoredPets)
+  }
+
   const filteredPets =
     selectedSpecies.length === 0
       ? pets
@@ -175,22 +282,6 @@ export default function DashboardContent() {
 
                 <div>
                   <label>
-                    What type of pet are you looking for?
-                    </label>
-                    <select
-                      value={matchAnswers.species}
-                      onChange={(e) => setMatchAnswers({ ...matchAnswers, species: e.target.value })}
-                      className="w-full p-2 mb-4 border rounded-md"
-                    >
-                      <option value="">Select species</option>
-                      <option value="dog">Dog</option>
-                      <option value="cat">Cat</option>
-                      <option value="bird">Bird</option>
-                    </select>
-                </div>
-
-                <div>
-                  <label>
                     How active is your lifestyle?
                   </label>
                   <select
@@ -217,7 +308,7 @@ export default function DashboardContent() {
                     <option value="">Select home type</option>
                     <option value="apartment">Apartment</option>
                     <option value="house">House</option>
-                    <option value="farm">House with a yard</option>
+                    <option value="houseWithYard">House with a yard</option>
                   </select>
                 </div>
                 <div>
@@ -263,9 +354,35 @@ export default function DashboardContent() {
                   </select>
                 </div>
 
-                <button className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium">
+                <button onClick= {handleFindMatches} className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium">
                   Find My Match
                 </button>
+                {recommendedPets.length > 0 && (
+                  <div className="mt-6">
+                  <h3 className="text-xl font-bold mb-4">
+                    Your Top Pet Matches
+                  </h3>
+
+                  {recommendedPets.map((pet, index) => (
+                    <div
+                      key={pet._id}
+                      className="border rounded-lg p-4 mb-3"
+                    >
+                    <p className="font-bold">
+                       #{index + 1} {pet.name}
+                    </p>
+
+                    <p>
+                      {pet.breed} - {pet.age} years old
+                    </p>
+
+                    <p className="font-semibold mt-2">
+                      Match Score: {pet.matchScore}
+                    </p>
+                </div>
+              ))}
+            </div>
+            )}
               </div>
             )}
           </section>
