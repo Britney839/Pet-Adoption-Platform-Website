@@ -30,17 +30,24 @@ export default function DashboardContent() {
   });
 
   const [recommendedPets, setRecommendedPets] = useState([]);
+  const [loadingPets, setLoadingPets] = useState(true);
+  const [petsError, setPetsError] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     async function loadPets() {
       try {
+        setPetsError("");
         const res = await fetch("/api/pets", {
           cache: "no-store",
         });
+        if (!res.ok) throw new Error("Unable to load pets");
         const data = await res.json();
         setPets(data);
-      } catch (err) {
-        console.error("Error loading pets:", err);
+      } catch {
+        setPetsError("We could not load the available pets. Please refresh and try again.");
+      } finally {
+        setLoadingPets(false);
       }
     }
 
@@ -64,12 +71,13 @@ export default function DashboardContent() {
   };
 
   async function handleDelete(id) {
-    const response = await fetch(`/api/pets/${id}`, {
-      method: "DELETE",
-    });
-
-    if (response.ok) {
+    try {
+      const response = await fetch(`/api/pets/${id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Unable to delete pet");
       setPets((prev) => prev.filter((pet) => pet._id !== id));
+      setStatusMessage("Pet removed from the adoption list.");
+    } catch {
+      setStatusMessage("We could not remove that pet. Please try again.");
     }
   }
 
@@ -116,12 +124,12 @@ export default function DashboardContent() {
           )
         );
         setEditingPet(null);
-        alert("Pet updated successfully!");
+        setStatusMessage("Pet updated successfully.");
       } else {
-        alert("Failed to update pet.");
+        setStatusMessage("We could not update that pet. Please try again.");
       }
-    } catch (err) {
-      console.error("Error updating pet:", err);
+    } catch {
+      setStatusMessage("We could not update that pet. Please try again.");
     }
   }
 
@@ -137,22 +145,6 @@ export default function DashboardContent() {
       imageName: "",
       intakeNotes: "",
     });
-  }
-
-  async function saveExample() {
-    try {
-      const res = await fetch("/api/user-pets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ petName: "Milo" }),
-      });
-
-      const data = await res.json();
-      alert(data.success ? "Saved for your account" : data.error);
-    } catch (err) {
-      console.error("Error saving user pet:", err);
-      alert("Could not save your pet right now.");
-    }
   }
 
   function calculateMatchScore(pet) {
@@ -524,25 +516,23 @@ export default function DashboardContent() {
           <div className="mb-6 text-center">
             <h2 className="text-3xl font-bold">Available Pets for Adoption</h2>
             <p className="text-gray-600">{pets.length} pets looking for a home</p>
-
-            <button
-              onClick={saveExample}
-              className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-full transition font-medium"
-            >
-              Save pet for my account
-            </button>
+            {statusMessage && <p role="status" className="mt-3 text-sm font-medium text-[#1f5f4a]">{statusMessage}</p>}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
-            {filteredPets.map((pet) => (
-              <AdminPetCard
-                key={pet._id}
-                pet={pet}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          {loadingPets && <p className="rounded-xl bg-white p-8 text-center text-gray-600">Loading available pets...</p>}
+          {petsError && <p role="alert" className="rounded-xl bg-red-50 p-8 text-center text-red-700">{petsError}</p>}
+          {!loadingPets && !petsError && filteredPets.length === 0 && (
+            <p className="rounded-xl bg-white p-8 text-center text-gray-600">
+              {pets.length === 0 ? "There are no pets available right now. Please check back soon." : "No pets match the selected species."}
+            </p>
+          )}
+          {!loadingPets && !petsError && filteredPets.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
+              {filteredPets.map((pet) => (
+                <AdminPetCard key={pet._id} pet={pet} onEdit={handleEdit} onDelete={handleDelete} />
+              ))}
+            </div>
+          )}
         </section>
       </div>
 
