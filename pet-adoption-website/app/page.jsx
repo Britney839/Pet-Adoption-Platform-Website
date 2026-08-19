@@ -7,7 +7,7 @@ export default function HomePage() {
   const featuredPets = [
     { id: 7, name: 'Henry', breed: 'Cavalier King Charles Spaniel', age: 1, image: 'IMG-8092.jpg' },
     { id: 8, name: 'Max', breed: 'Beagle', age: 7, image: 'IMG-8098.jpg' },
-    { id: 9, name: 'Jack', breed: 'Cairne Terrier', age: 4, image: 'IMG-8094.jpg' },
+    { id: 9, name: 'Jack', breed: 'Cairn Terrier', age: 4, image: 'IMG-8094.jpg' },
   ]
   return (
     <div className="bg-[#fcf7ee] min-h-screen">
@@ -26,7 +26,7 @@ export default function HomePage() {
         </section>
 
         <section className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-md text-center">
-          <h2 className="text-2xl font-bold mb-3">Why adopt?</h2><br></br>
+          <h2 className="text-2xl font-bold mb-3">Why adopt?</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Adopting a pet is a rewarding experience that brings joy and companionship.</p>
         </section>
 
@@ -36,7 +36,7 @@ export default function HomePage() {
               <h3 className="text-xl font-bold mb-2">Browse Pets</h3>
               <p className="text-gray-600 mb-4">Search through dogs, cats, birds, and more to find your perfect match.</p>
               <Link href="/dashboard">
-                <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition">Find All Pets</button>
+                <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition">Browse Available Pets</button>
               </Link>
             </section>
 
@@ -54,16 +54,6 @@ export default function HomePage() {
             </section>
           </div>
         </section>
-
-        <section className="bg-white/90 p-6 rounded-2xl shadow-md hover:shadow-xl transition text-center">
-          <h3 className="text-xl font-bold mb-2">Admin Page</h3>
-          <p className="text-gray-600 mb-4">*Requires adminstration privileges.</p>
-          <Link href="/login">
-            <button className="bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition">Take Me There</button>
-          </Link>
-        </section>
-
-
 
         <section className="text-center">
           <h2 className="text-2xl font-bold mb-4">Ready to adopt?</h2>

@@ -13,15 +13,15 @@ export default function AdminPetCard({
 
             <p className="text-gray-600"> Breed: {pet.breed}</p>
 
-            <p className="text-gray-500 text-sm"> Age: {pet.age} years</p>
+            <p className="text-gray-500 text-sm"> Age: {pet.age} {pet.age === 1 ? "year" : "years"}</p>
 
-            <Link href="/contact">
-                <button className="mt-3 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">Adopt Me</button>
+            <Link href="/contact" className="mt-3 inline-block bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">
+                Adopt Me
             </Link>
 
             <button onClick={() => onEdit(pet)} className="mt-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition font-medium shadow-sm"> Edit </button>
 
-            <button onClick={() => onDelete(pet._id)} className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition font-medium shadow-sm"> Delete (Adopted) </button>
+            <button onClick={() => onDelete(pet._id)} className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition font-medium shadow-sm"> Delete Pet </button>
 
             {pet.listing && (
                 <div className="mt-4 rounded-2xl border border-[#f3d7bf] bg-[#fffbf6] p-4 text-left">
@@ -31,7 +31,7 @@ export default function AdminPetCard({
 
                     <div className="flex flex-wrap gap-2 mb-3">
 
-                        {pet.listing.personalityTraits.map((trait) => (
+                        {(pet.listing.personalityTraits || []).map((trait) => (
                             <span key={trait} className="rounded-full bg-[#fde4c7] px-3 py-1 text-xs font-medium text-[#7c4a1b]" >
                                 {trait}
                             </span>
@@ -46,7 +46,7 @@ export default function AdminPetCard({
                     </p>
 
                     <div className="flex flex-wrap gap-2 mb-3">
-                        {pet.listing.goodWith.map((item) => (
+                        {(pet.listing.goodWith || []).map((item) => (
                             <span key={item} className="rounded-full bg-[#e7f7f1] px-2 py-1 text-xs text-[#1f5f4a]" >
                                 Good with {item.replace("_", " ")}
                             </span>
@@ -54,7 +54,7 @@ export default function AdminPetCard({
                     </div>
 
                     <p className="italic text-sm text-gray-700">
-                        "{pet.listing.adoptionPitch}"
+                        &ldquo;{pet.listing.adoptionPitch}&rdquo;
                     </p>
                     
                 </div>

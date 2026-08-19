@@ -6,6 +6,7 @@ export default function GenerateListingButton({ pet, onListingGenerated }) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const isExistingPet = Boolean(pet?._id);
   const canGenerate = Boolean(
     pet?.name && pet?.breed && pet?.species && pet?.age !== "" && pet?.intakeNotes
@@ -14,23 +15,28 @@ export default function GenerateListingButton({ pet, onListingGenerated }) {
   async function handleGenerate() {
     setLoading(true);
     setSaved(false);
-    const res = await fetch("/api/generate-listing", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: pet.name,
-        species: pet.species,
-        breed: pet.breed,
-        age: pet.age,
-        intakeNotes: pet.intakeNotes,
-      }),
-    });
-    const data = await res.json();
-    setListing(data);
-    if (onListingGenerated) {
-      onListingGenerated(data);
+    setErrorMessage("");
+    try {
+      const res = await fetch("/api/generate-listing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: pet.name,
+          species: pet.species,
+          breed: pet.breed,
+          age: pet.age,
+          intakeNotes: pet.intakeNotes,
+        }),
+      });
+      if (!res.ok) throw new Error("Listing generation failed");
+      const data = await res.json();
+      setListing(data);
+      if (onListingGenerated) onListingGenerated(data);
+    } catch {
+      setErrorMessage("We could not generate a listing. Please check the pet details and try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function handleSave() {
@@ -40,13 +46,20 @@ export default function GenerateListingButton({ pet, onListingGenerated }) {
     }
 
     setSaving(true);
-    const res = await fetch(`/api/pets/${pet._id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ listing }),
-    });
-    if (res.ok) setSaved(true);
-    setSaving(false);
+    setErrorMessage("");
+    try {
+      const res = await fetch(`/api/pets/${pet._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listing }),
+      });
+      if (!res.ok) throw new Error("Listing save failed");
+      setSaved(true);
+    } catch {
+      setErrorMessage("We could not save this listing. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -54,6 +67,8 @@ export default function GenerateListingButton({ pet, onListingGenerated }) {
       <button type="button" onClick={handleGenerate} disabled={loading || !canGenerate}>
         {loading ? "Writing listing..." : "Generate AI Listing"}
       </button>
+
+      {errorMessage && <p role="alert" className="mt-2 text-sm text-red-700">{errorMessage}</p>}
 
       {!canGenerate && (
         <p className="text-sm text-gray-500 mt-2">

@@ -1,6 +1,17 @@
+"use client";
+
 import NavBar from "../../components/navbar";
+import { useState } from "react";
 
 export default function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setSubmitted(true);
+    event.currentTarget.reset();
+  }
+
   return (
     <div className="bg-[#fcf7ee] min-h-screen">
       <header>
@@ -12,7 +23,7 @@ export default function ContactPage() {
           <p className="text-gray-600">If you have a question about adopting, or want to know more about one of our pets, we would love to hear from you!</p>
         </section>
         <section className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-md">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <fieldset>
               <legend className="text-xl font-bold mb-4">Contact Information</legend>
               <label htmlFor="name">Name:</label>
@@ -33,7 +44,8 @@ export default function ContactPage() {
               </select>
               <label htmlFor="message">Message:</label>
               <textarea id="message" name="message" placeholder="Please enter your message here!" className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ffb38a]"required></textarea>
-              <button type="submit" className="w-full bg-[#ffb38a] hover:bg-[#ff9c6b] text-white py-3 rounded-lg font-medium transition shadow-md">Submit</button>
+              <button type="submit" className="w-full bg-[#ffb38a] hover:bg-[#ff9c6b] text-white py-3 rounded-lg font-medium transition shadow-md">Send Message</button>
+              {submitted && <p role="status" className="rounded-lg bg-green-50 px-4 py-3 text-center text-sm font-medium text-green-700">Thanks for reaching out. We will get back to you soon.</p>}
             </fieldset>
           </form>
         </section>
@@ -42,7 +54,7 @@ export default function ContactPage() {
           <h2>Contact Us</h2>
           <p className="text-gray-600">Phone: (709) 437-5555</p>
           <p className="text-gray-600">Email: adopt@bravepaws.com</p>
-          <p className="text-gray-600">Address: 123 Paw Lane, St. John's</p>
+          <p className="text-gray-600">Address: 123 Paw Lane, St. John&apos;s</p>
         </section>
       </main>
     </div>
