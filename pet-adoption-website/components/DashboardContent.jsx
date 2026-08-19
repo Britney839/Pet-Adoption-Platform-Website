@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import PetCard from "./petCard";
 import AdminPetCard from "./AdminPetCard";
 import GenerateListingButton from "./GenerateListingButton";
 
-export default function DashboardContent() {
+export default function DashboardContent({ adminMode = false }) {
   const [selectedSpecies, setSelectedSpecies] = useState([]);
   const [pets, setPets] = useState([]);
   const [editingPet, setEditingPet] = useState(null);
@@ -18,7 +19,7 @@ export default function DashboardContent() {
     intakeNotes: "",
   });
   const [editListing, setEditListing] = useState(null);
-
+  const [statusMessage, setStatusMessage] = useState("");
   const [showMatcher, setShowMatcher] = useState(false);
 
   const [matchAnswers, setMatchAnswers] = useState({
@@ -32,7 +33,6 @@ export default function DashboardContent() {
   const [recommendedPets, setRecommendedPets] = useState([]);
   const [loadingPets, setLoadingPets] = useState(true);
   const [petsError, setPetsError] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     async function loadPets() {
@@ -56,7 +56,6 @@ export default function DashboardContent() {
 
   useEffect(() => {
     document.body.style.overflow = editingPet ? "hidden" : "";
-
     return () => {
       document.body.style.overflow = "";
     };
@@ -70,19 +69,7 @@ export default function DashboardContent() {
     );
   };
 
-  async function handleDelete(id) {
-    try {
-      const response = await fetch(`/api/pets/${id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Unable to delete pet");
-      setPets((prev) => prev.filter((pet) => pet._id !== id));
-      setStatusMessage("Pet removed from the adoption list.");
-    } catch {
-      setStatusMessage("We could not remove that pet. Please try again.");
-    }
-  }
-
   function handleEdit(pet) {
-    const imageName = pet.image ? pet.image.replace(/^\//, "") : "";
     setEditingPet(pet._id);
     setEditListing(pet.listing ?? null);
     setEditForm({
@@ -90,61 +77,54 @@ export default function DashboardContent() {
       breed: pet.breed,
       species: pet.species || "dog",
       age: pet.age,
-      description: pet.description,
-      imageName: imageName,
+      description: pet.description || "",
+      imageName: pet.image ? pet.image.replace(/^\//, "") : "",
       intakeNotes: pet.intakeNotes || "",
     });
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm("Delete this pet from the adoption list?")) return;
+
+    try {
+      const response = await fetch(`/api/pets/${id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Delete failed");
+      setPets((previousPets) => previousPets.filter((pet) => pet._id !== id));
+      setStatusMessage("Pet deleted successfully.");
+    } catch {
+      setStatusMessage("We could not delete that pet. Please try again.");
+    }
   }
 
   async function handleSaveEdit() {
     if (!editingPet) return;
 
-    const petData = {
-      name: editForm.name,
-      breed: editForm.breed,
-      species: editForm.species,
-      age: Number(editForm.age),
-      description: editForm.description,
-      image: `/${editForm.imageName}`,
-      intakeNotes: editForm.intakeNotes,
-      ...(editListing ? { listing: editListing } : {}),
-    };
-
     try {
       const response = await fetch(`/api/pets/${editingPet}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(petData),
+        body: JSON.stringify({
+          name: editForm.name,
+          breed: editForm.breed,
+          species: editForm.species,
+          age: Number(editForm.age),
+          description: editForm.description,
+          image: `/${editForm.imageName}`,
+          intakeNotes: editForm.intakeNotes,
+          ...(editListing ? { listing: editListing } : {}),
+        }),
       });
-
-      if (response.ok) {
-        setPets((prev) =>
-          prev.map((pet) =>
-            pet._id === editingPet ? { ...pet, ...petData } : pet
-          )
-        );
-        setEditingPet(null);
-        setStatusMessage("Pet updated successfully.");
-      } else {
-        setStatusMessage("We could not update that pet. Please try again.");
-      }
+      if (!response.ok) throw new Error("Update failed");
+      setPets((previousPets) => previousPets.map((pet) => (
+        pet._id === editingPet
+          ? { ...pet, ...editForm, age: Number(editForm.age), image: `/${editForm.imageName}`, listing: editListing }
+          : pet
+      )));
+      setEditingPet(null);
+      setStatusMessage("Pet updated successfully.");
     } catch {
       setStatusMessage("We could not update that pet. Please try again.");
     }
-  }
-
-  function handleCancelEdit() {
-    setEditingPet(null);
-    setEditListing(null);
-    setEditForm({
-      name: "",
-      breed: "",
-      species: "dog",
-      age: "",
-      description: "",
-      imageName: "",
-      intakeNotes: "",
-    });
   }
 
   function calculateMatchScore(pet) {
@@ -529,98 +509,46 @@ export default function DashboardContent() {
           {!loadingPets && !petsError && filteredPets.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
               {filteredPets.map((pet) => (
-                <AdminPetCard key={pet._id} pet={pet} onEdit={handleEdit} onDelete={handleDelete} />
+                adminMode ? (
+                  <AdminPetCard key={pet._id} pet={pet} onEdit={handleEdit} onDelete={handleDelete} />
+                ) : (
+                  <PetCard key={pet._id} pet={pet} />
+                )
               ))}
             </div>
           )}
         </section>
       </div>
 
-      {editingPet && (
+      {adminMode && editingPet && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4">
           <div className="mx-auto my-10 w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-            <h2 className="text-2xl font-bold mb-6">Edit Pet</h2>
-
-            <input
-              type="text"
-              placeholder="Name"
-              value={editForm.name}
-              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-            />
-
-            <input
-              type="text"
-              placeholder="Breed"
-              value={editForm.breed}
-              onChange={(e) => setEditForm({ ...editForm, breed: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-            />
-
-            <select
-              value={editForm.species}
-              onChange={(e) => setEditForm({ ...editForm, species: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-            >
+            <h2 className="mb-6 text-2xl font-bold">Edit Pet</h2>
+            <label className="mb-1 block font-medium" htmlFor="edit-name">Name</label>
+            <input id="edit-name" value={editForm.name} onChange={(event) => setEditForm({ ...editForm, name: event.target.value })} className="mb-4 w-full rounded-md border p-2" />
+            <label className="mb-1 block font-medium" htmlFor="edit-breed">Breed</label>
+            <input id="edit-breed" value={editForm.breed} onChange={(event) => setEditForm({ ...editForm, breed: event.target.value })} className="mb-4 w-full rounded-md border p-2" />
+            <label className="mb-1 block font-medium" htmlFor="edit-species">Species</label>
+            <select id="edit-species" value={editForm.species} onChange={(event) => setEditForm({ ...editForm, species: event.target.value })} className="mb-4 w-full rounded-md border p-2">
               <option value="dog">Dog</option>
               <option value="cat">Cat</option>
               <option value="bird">Bird</option>
             </select>
-
-            <input
-              type="number"
-              placeholder="Age"
-              value={editForm.age}
-              onChange={(e) => setEditForm({ ...editForm, age: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-            />
-
-            <textarea
-              placeholder="Description"
-              value={editForm.description}
-              onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-            />
-
-            <input
-              type="text"
-              placeholder="Image filename (e.g. buddy.jpg)"
-              value={editForm.imageName}
-              onChange={(e) => setEditForm({ ...editForm, imageName: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-            />
-
-            <textarea
-              placeholder="Staff notes"
-              value={editForm.intakeNotes}
-              onChange={(e) => setEditForm({ ...editForm, intakeNotes: e.target.value })}
-              className="w-full p-2 mb-4 border rounded-md"
-              rows={4}
-            />
-
+            <label className="mb-1 block font-medium" htmlFor="edit-age">Age in years</label>
+            <input id="edit-age" type="number" min="0" value={editForm.age} onChange={(event) => setEditForm({ ...editForm, age: event.target.value })} className="mb-4 w-full rounded-md border p-2" />
+            <label className="mb-1 block font-medium" htmlFor="edit-description">Description</label>
+            <textarea id="edit-description" value={editForm.description} onChange={(event) => setEditForm({ ...editForm, description: event.target.value })} className="mb-4 w-full rounded-md border p-2" />
+            <label className="mb-1 block font-medium" htmlFor="edit-image">Image filename</label>
+            <input id="edit-image" value={editForm.imageName} onChange={(event) => setEditForm({ ...editForm, imageName: event.target.value })} className="mb-4 w-full rounded-md border p-2" />
+            <label className="mb-1 block font-medium" htmlFor="edit-notes">Staff notes</label>
+            <textarea id="edit-notes" value={editForm.intakeNotes} onChange={(event) => setEditForm({ ...editForm, intakeNotes: event.target.value })} className="mb-4 w-full rounded-md border p-2" rows={4} />
             <GenerateListingButton
-              pet={{
-                ...editForm,
-                _id: editingPet,
-                intakeNotes: editForm.intakeNotes,
-                listing: editListing,
-              }}
+              pet={{ ...editForm, _id: editingPet, listing: editListing }}
               onListingGenerated={setEditListing}
             />
-
-            <div className="flex gap-4 mt-6">
-              <button
-                onClick={handleSaveEdit}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition font-medium"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancelEdit}
-                className="flex-1 bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg transition font-medium"
-              >
-                Cancel
-              </button>
+            <div className="mt-6 flex gap-4">
+              <button onClick={handleSaveEdit} className="flex-1 rounded-lg bg-blue-500 px-4 py-2 font-medium text-white transition hover:bg-blue-600">Save Changes</button>
+              <button onClick={() => setEditingPet(null)} className="flex-1 rounded-lg bg-gray-400 px-4 py-2 font-medium text-white transition hover:bg-gray-500">Cancel</button>
             </div>
           </div>
         </div>
