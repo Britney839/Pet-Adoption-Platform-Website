@@ -9,17 +9,15 @@ export default function PetCard({ pet }) {
 
       <p className="text-gray-600"> {pet.breed} </p>
 
-      <p className="text-gray-500 text-sm"> {pet.age} years old </p>
+      <p className="text-gray-500 text-sm"> {pet.age} {pet.age === 1 ? "year" : "years"} old </p>
 
       {pet.adopted ? (
         <button disabled className="mt-3 bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
           Adopted
         </button>
       ) : (
-        <Link href="/contact">
-          <button className="mt-3 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">
-            Adopt Me
-          </button>
+        <Link href="/contact" className="mt-3 inline-block bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">
+          Adopt Me
         </Link>
       )}
     </div>
