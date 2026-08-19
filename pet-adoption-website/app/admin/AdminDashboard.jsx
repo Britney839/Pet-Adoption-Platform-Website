@@ -1,10 +1,11 @@
 "use client";
 import { addPet } from "../actions/pets";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import NavBar from "../../components/navbar";
 import GenerateListingButton from "../../components/GenerateListingButton";
 
 export default function AdminPage() {
+    const [state, formAction, isPending] = useActionState(addPet, null);
     const [newPet, setNewPet] = useState({
         name: "",
         breed: "",
@@ -29,7 +30,7 @@ export default function AdminPage() {
                 <div className="bg-white rounded-2xl shadow-lg p-8">
                     <h2 className="text-4xl font-bold mb-2 text-gray-800">Add a New Pet</h2>
                     <p className="text-gray-600 mb-8">Fill out the form below to add a new pet to the adoption platform.</p>
-                    <form action={addPet} className="space-y-6">
+                    <form action={formAction} className="space-y-6">
 
                         <label htmlFor="name" className="block font-semibold">Pet name</label>
                         <input
@@ -118,10 +119,16 @@ export default function AdminPage() {
 
                         <button
                             type="submit"
+                            disabled={isPending}
                             className="w-full bg-[#ffb38a] hover:bg-[#ff9c6b] text-white font-bold py-3 rounded-lg"
                         >
-                            Add Pet with Listing
+                            {isPending ? "Adding Pet..." : "Add Pet with Listing"}
                         </button>
+                        {state?.message && (
+                            <p role={state.success ? "status" : "alert"} className={state.success ? "text-center text-sm font-medium text-green-700" : "text-center text-sm font-medium text-red-700"}>
+                                {state.message}
+                            </p>
+                        )}
                     </form>
                 </div>
                 <p className="text-center text-gray-600 mt-8 text-sm">Fields marked by the form are required.</p>

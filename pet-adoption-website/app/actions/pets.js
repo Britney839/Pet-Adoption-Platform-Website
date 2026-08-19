@@ -2,7 +2,7 @@
 import clientPromise from "../api/db";
 import { petListingSchema } from "../../lib/schemas/petListing.js";
 
-export async function addPet(formData){
+export async function addPet(previousState, formData){
     const name = formData.get("name");
     const breed = formData.get("breed");
     const species = formData.get("species");
@@ -26,23 +26,28 @@ export async function addPet(formData){
         }
     }
 
-    const client = await clientPromise;
-    const db = client.db("pet_adoption");
+    try {
+        const client = await clientPromise;
+        const db = client.db("pet_adoption");
 
-    const pet = {
-        name,
-        breed,
-        species,
-        age: Number(age),
-        description,
-        image,
-        intakeNotes,
-    };
+        const pet = {
+            name,
+            breed,
+            species,
+            age: Number(age),
+            description,
+            image,
+            intakeNotes,
+        };
 
-    if (listing) {
-        pet.listing = listing;
-        pet.listingGeneratedAt = new Date();
+        if (listing) {
+            pet.listing = listing;
+            pet.listingGeneratedAt = new Date();
+        }
+
+        await db.collection("pets").insertOne(pet);
+        return { success: true, message: "Pet added successfully." };
+    } catch {
+        return { success: false, message: "We could not add the pet. Please try again." };
     }
-
-    await db.collection("pets").insertOne(pet);
 }
