@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+:root {
+    --page-bg: #fcf7ee;
+    --ink: #3f3028;
+    --brand: #ffb38a;
+    --brand-dark: #ff9c6b;
+}
+
 body {
-    background-color: #e8f5e9;
+    background-color: var(--page-bg);
+    color: var(--ink);
+    margin: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(255, 156, 107, 0.4);
+    outline-offset: 2px;
 }
