@@ -5,8 +5,12 @@ import { useEffect, useState } from "react";
 
 export default function AboutPage() {
   const [dogImg, setDogImg] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function getDogImage() {
+    setLoading(true);
+    setErrorMessage("");
     try {
       const response = await fetch("/api?t=" + Date.now(), {
       cache: "no-store",
@@ -17,15 +21,29 @@ export default function AboutPage() {
       }
 
       const data = await response.json();
-      console.log("Dog image URL:", data.message);
       setDogImg(data.message);
     } catch (error) {
-      console.error("Error fetching dog image:", error.message);
+      setErrorMessage("We could not load a success story right now. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    getDogImage();
+    async function loadInitialImage() {
+      try {
+        const response = await fetch("/api?t=" + Date.now(), { cache: "no-store" });
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setDogImg(data.message);
+      } catch {
+        setErrorMessage("We could not load a success story right now. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadInitialImage();
   }, []);
 
   return (
@@ -55,10 +73,12 @@ export default function AboutPage() {
 
           <p className="text-gray-600 max-w-2xl mx-auto">Explore a collection of happy pets that reflect the adoption success stories at the heart of our mission.</p>
           <div className="bg-white rounded-2xl p-6 shadow-md max-w-md mx-auto">
-          {dogImg && (
+          {loading && <p className="text-gray-600">Loading a happy pet...</p>}
+          {errorMessage && <p role="alert" className="text-red-700">{errorMessage}</p>}
+          {dogImg && !loading && (
             <img src={dogImg} alt="dog" width={300} className="w-full h-64 object-contain rounded-xl"/>
           )}
-            <button onClick={getDogImage} className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">Show Another Happy Pet</button>
+            <button onClick={getDogImage} disabled={loading} className="mt-4 bg-[#ffb38a] hover:bg-[#ff9c6b] disabled:cursor-not-allowed disabled:opacity-60 text-white px-4 py-2 rounded-lg transition font-medium shadow-sm">{loading ? "Loading..." : "Show Another Happy Pet"}</button>
           </div>
         </section>
       </main>
